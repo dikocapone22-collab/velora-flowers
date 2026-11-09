@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-cream font-sans text-ink antialiased;
+    overflow-x: hidden;
+  }
+
+  @supports (overflow: clip) {
+    body {
+      overflow-x: clip;
+    }
+  }
+
+  /* Отступ под фиксированную шапку при переходе по якорям */
+  section[id] {
+    scroll-margin-top: 4.5rem;
+  }
+
+  a,
+  button {
+    touch-action: manipulation;
+  }
+
+  :focus-visible {
+    outline: 2px solid #641d32;
+    outline-offset: 3px;
+  }
+
+  ::selection {
+    background: #e8cfcf;
+    color: #252321;
+  }
+}
+
+@layer components {
+  /* Появление при прокрутке: только opacity + transform (дешево для GPU) */
+  .reveal {
+    opacity: 0;
+    transform: translate3d(0, 24px, 0);
+    transition:
+      opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .reveal[data-visible='true'] {
+    opacity: 1;
+    transform: none;
+  }
+
+  .animate-fade-up {
+    animation: fade-up 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .animate-menu-in {
+    animation: menu-in 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translate3d(0, -8px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Уважаем системную настройку «Уменьшить движение» */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Облегчённый режим для слабых устройств и режима экономии трафика (см. src/lib/device.ts) */
+.lite .reveal,
+.lite .animate-fade-up,
+.lite .animate-fade-in {
+  opacity: 1;
+  transform: none;
+  transition: none;
+  animation: none;
+}
+
+.lite .img-zoom {
+  transition: none;
+  transform: none !important;
+}
